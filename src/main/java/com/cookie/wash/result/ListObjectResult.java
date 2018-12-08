@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by chenlei on 2017/5/24.
+ * Created by cxq on 2017/5/24.
  */
 public class ListObjectResult extends Result{
 

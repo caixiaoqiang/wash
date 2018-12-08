@@ -3,7 +3,7 @@ package com.cookie.wash.result;
 import java.util.Map;
 
 /**
- * Created by chenlei on 2017/5/24.
+ * Created by cxq on 2017/5/24.
  */
 public class MapObjectResult extends Result{
 

@@ -1,7 +1,7 @@
 package com.cookie.wash.result;
 
 /**
- * Created by chenlei on 2017/5/24.
+ * Created by cxq on 2017/5/24.
  */
 public class IntResult extends Result{
 

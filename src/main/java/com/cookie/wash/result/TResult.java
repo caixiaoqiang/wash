@@ -1,7 +1,7 @@
 package com.cookie.wash.result;
 
 /**
- * Created by xc on 2017/7/10.
+ * Created by cxq on 2017/7/10.
  */
 public class TResult<T> extends Result {
     private T data;
