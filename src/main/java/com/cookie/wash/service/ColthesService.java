@@ -46,7 +46,7 @@ public class ColthesService extends BaseDictDaoService<Account> {
                 "   where 1 = 1 ");
         if (StringUtils.isNotBlank(keyword)){
             sb.append(" and c.name like ? ");
-            params.add(keyword);
+            params.add("%"+keyword+"%");
         }
         int count = getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size();
         sb.append(" order by c.add_time asc "+limit );
@@ -79,7 +79,7 @@ public class ColthesService extends BaseDictDaoService<Account> {
                 "   from clothes c " +
                 "   where 1 = 1 ");
         if (StringUtils.isNotBlank(keyword)){
-            sb.append(" and a.name like ? ");
+            params.add("%"+keyword+"%");
             params.add(keyword);
         }
         int count = getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size();

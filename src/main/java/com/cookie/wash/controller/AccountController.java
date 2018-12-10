@@ -5,6 +5,7 @@ import com.cookie.wash.result.TResult;
 import com.cookie.wash.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,4 +20,14 @@ public class AccountController {
     public TResult<Integer> add(Account account ){
         return  new TResult<>(accountService.save(account));
     }
+
+
+    @PutMapping("")
+    public TResult<Integer> update(Account account ){
+        return  new TResult<>(accountService.update(account));
+    }
+
+
+
+
 }
