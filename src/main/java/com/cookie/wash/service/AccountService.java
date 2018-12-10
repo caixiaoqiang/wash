@@ -61,7 +61,9 @@ public class AccountService extends BaseDictDaoService<Account> {
                 "   where 1 = 1 ");
         if (StringUtils.isNotBlank(keyword)){
             sb.append(" and c.name like ? ");
-            params.add(keyword);
+            sb.append(" or c.phone like ? ");
+            params.add("%"+keyword+"%");
+            params.add("%"+keyword+"%");
         }
         int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size() : 0 ;
         switch (order){
