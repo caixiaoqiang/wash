@@ -21,6 +21,9 @@ public class Account {
     @Column
     private String money;
 
+    @Column
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -67,5 +70,13 @@ public class Account {
 
     public void setMoney(String money) {
         this.money = money;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

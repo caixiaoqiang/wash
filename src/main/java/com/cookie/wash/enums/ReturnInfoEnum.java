@@ -21,6 +21,10 @@ public enum ReturnInfoEnum implements RestStatus {
      */
     Fail(RestEnum.common.getCode(),"000001", "失败"),
     /**
+     * 重复操作
+     */
+    Repetition(RestEnum.common.getCode(),"000002", "重复操作"),
+    /**
      * 用户未登录
      */
     NotLogin(RestEnum.common.getCode(),"000999", "用户未登录"),
