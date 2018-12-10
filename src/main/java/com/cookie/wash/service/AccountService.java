@@ -63,7 +63,7 @@ public class AccountService extends BaseDictDaoService<Account> {
             sb.append(" and c.name like ? ");
             params.add(keyword);
         }
-        int count = getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size();
+        int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size() : 0 ;
         switch (order){
             case 1 :
                 sb.append(" order by c.add_time  " );
@@ -84,20 +84,52 @@ public class AccountService extends BaseDictDaoService<Account> {
         List<Map<String,String>> accounts = getDao().rawQuery(sb.toString(),params.toArray(new String[]{}));
 
         result.put("count",count);
-        result.put("data",accounts);
+        result.put("datas",accounts);
 
         return  result ;
     }
 
-    public Map<String,Object> getAccountDetailByUuid(String uuid ){
+    public Map<String,Object> getAccountDetailByUuid(String uuid , int pageNumber , int pageSize ){
         Map<String,Object> result = new HashMap<>();
         Map<String,String> account = getDao().rawQueryForMap("select a.uuid , a.money , a.sex , a.phone , " +
                 "   a.last_recharge_time , a.last_consume_time " +
                 "   from account a " +
                 "   where uuid = ? ", new String[]{uuid});
         if (account != null ){
+            // TODO 消费记录
+            String limit = UUIDUtils.getLimit(pageNumber, pageSize);
+            StringBuffer sb = new StringBuffer();
+            sb.append("select uuid , account_uuid , money ,indent_num,indent_status,status ,add_time " +
+                    "   from consume_record " +
+                    "   where account_uuid = ? ");
+            int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(), new String[]{uuid}).size() : 0 ;
+
+            sb.append( " order by add_time desc "+limit );
+            List<Map<String,String>> consumes = getDao().rawQuery(sb.toString(), new String[]{uuid});
+
+            result.put("account",account);
+            result.put("count",count);
+            result.put("datas",consumes);
 
         }
+
+        return  result ;
+    }
+
+    public Map<String,Object> getAccountCharges(String uuid , int pageNumber , int pageSize ){
+        Map<String,Object> result = new HashMap<>();
+        String limit = UUIDUtils.getLimit(pageNumber, pageSize);
+        StringBuffer sb = new StringBuffer();
+        sb.append("select uuid , account_uuid ,charge_money,present_money,money ,add_time " +
+                "   from charge_record " +
+                "   where account_uuid = ? ");
+        int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(), new String[]{uuid}).size() : 0 ;
+
+        sb.append( " order by add_time desc "+limit );
+        List<Map<String,String>> charges = getDao().rawQuery(sb.toString(), new String[]{uuid});
+
+        result.put("count",count);
+        result.put("datas",charges);
 
         return  result ;
     }

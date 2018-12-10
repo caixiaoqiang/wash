@@ -48,12 +48,12 @@ public class ColthesService extends BaseDictDaoService<Account> {
             sb.append(" and c.name like ? ");
             params.add("%"+keyword+"%");
         }
-        int count = getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size();
+        int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size() : 0 ;
         sb.append(" order by c.add_time asc "+limit );
         List<Map<String,String>> color = getDao().rawQuery(sb.toString(),params.toArray(new String[]{}));
 
         result.put("count",count);
-        result.put("data",color);
+        result.put("datas",color);
 
         return  result;
 
@@ -82,12 +82,12 @@ public class ColthesService extends BaseDictDaoService<Account> {
             params.add("%"+keyword+"%");
             params.add(keyword);
         }
-        int count = getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size();
+        int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(),params.toArray(new String[]{})).size() : 0 ;
         sb.append(" order by c.add_time asc "+limit );
         List<Map<String,String>> clothes = getDao().rawQuery(sb.toString(),params.toArray(new String[]{}));
 
         result.put("count",count);
-        result.put("data",clothes);
+        result.put("datas",clothes);
 
         return  result;
 

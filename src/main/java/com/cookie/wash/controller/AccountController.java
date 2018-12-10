@@ -4,10 +4,9 @@ import com.cookie.wash.domian.Account;
 import com.cookie.wash.result.TResult;
 import com.cookie.wash.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/account")
@@ -29,5 +28,14 @@ public class AccountController {
 
 
 
+    @GetMapping("")
+    public TResult<Map<String,Object>> getAccounts(@RequestParam("keyword") String keyword ,
+                                    @RequestParam("order") int order ,
+                                    @RequestParam("orderType") int order_type ,
+                                    @RequestParam("pageNumber") int pageNumber ,
+                                    @RequestParam("pageSize") int pageSize
+                                        ){
+        return  new TResult<>(accountService.getAccounts(keyword, order, order_type, pageNumber, pageSize));
+    }
 
 }
