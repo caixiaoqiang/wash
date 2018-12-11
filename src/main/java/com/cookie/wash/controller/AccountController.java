@@ -98,4 +98,20 @@ public class AccountController {
         return  new TResult<>(accountService.getAccountCharges(accountUuid, pageNumber, pageSize));
     }
 
+
+    /**
+     * 充值
+     * @param accountUuid
+     * @param chargeMoney
+     * @param presentMoney
+     * @return
+     */
+    @PostMapping("charge")
+    public TResult<Integer> addCharge(@RequestParam("uuid") String accountUuid ,
+                                      @RequestParam("charge_money") Double chargeMoney ,
+                                      @RequestParam("present_money") Double presentMoney){
+        return  new TResult<>(accountService.addCharge(accountUuid,chargeMoney,presentMoney));
+    }
+
+
 }

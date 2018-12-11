@@ -1,9 +1,14 @@
 package com.cookie.wash.service;
 
 import com.cookie.wash.domian.Account;
+import com.cookie.wash.domian.vo.ConsumeBean;
+import com.cookie.wash.domian.vo.ConsumeList;
+import com.cookie.wash.utils.DateUtils;
+import com.cookie.wash.utils.DoubleUtils;
 import com.cookie.wash.utils.UUIDUtils;
 import com.fantasi.common.db.IDBPool;
 import com.fantasi.common.db.service.BaseDictDaoService;
+import com.fantasi.common.db.service.TransactionException;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -151,5 +156,61 @@ public class AccountService extends BaseDictDaoService<Account> {
     public Map<String,String> getAccountByUuid (String uuid ){
         return  getDao().queryForMap("uuid = ? ", new String[]{uuid});
     }
+
+    public int addCharge(String accountUuid , Double chargeMoney , Double presentMoney ){
+        int result = 0;
+        Double money = DoubleUtils.get2Double(chargeMoney + presentMoney);
+        try {
+            result = this.execute(connection -> {
+
+                int  num = getDao().execute(connection," update account set  money = money + ?  , last_recharge_time = ? " +
+                        "   where uuid = ? ", new String[]{String.valueOf(money),DateUtils.getCurrentTime(),accountUuid});
+
+                return  getDao().execute(" insert into charge_record (uuid , account_uuid , charge_money , present_money , money )" +
+                        "   values (?,?,?,?,?)", new String[]{UUIDUtils.getUUID(),accountUuid, String.valueOf(chargeMoney), String.valueOf(presentMoney), String.valueOf(money)}) ;
+
+            });
+        } catch (TransactionException e) {
+            e.printStackTrace();
+        }
+
+        return  result ;
+    }
+
+
+    public int addConsume(String accountUuid , ConsumeList consumeList ){
+        int result = 0;
+        try {
+            result = this.execute(connection -> {
+
+                return  0 ;
+            });
+        } catch (TransactionException e) {
+            e.printStackTrace();
+        }
+
+        return  result ;
+    }
+
+    public Map<String,Object> getConsumes(String accountUuid , ConsumeList consumeList ){
+
+        Map<String,String> consume = new HashMap<>();
+        List<Map<String,String>> consumeChildren = new ArrayList<>();
+        List<Map<String,String>> clothesOrders = new ArrayList<>();
+
+        String consumeUuid = UUIDUtils.getUUID();
+        String indentNum = UUIDUtils.getUUID();
+        for (ConsumeBean consumeBean  : consumeList.getConsumeList() ){
+            // color_uuid , colthes_uuid , clothes_money ,  discount , money , len
+            Map<String,String> consumeChild  = new HashMap<>();
+            Map<String,String> clothesOrder  = new HashMap<>();
+
+
+        }
+
+
+        return  null ;
+    }
+
 
 }
