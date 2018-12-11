@@ -1,6 +1,7 @@
 package com.cookie.wash.controller;
 
 import com.cookie.wash.domian.Account;
+import com.cookie.wash.domian.vo.ConsumeList;
 import com.cookie.wash.result.TResult;
 import com.cookie.wash.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,19 @@ public class AccountController {
     }
 
     /**
+     * 收取衣物
+     * @param accountUuid
+     * @param consumeList
+     * @return
+     */
+    @PostMapping("/consume")
+    public TResult<Integer> addConsume(@RequestParam("account_uuid") String accountUuid ,
+                                                        ConsumeList consumeList
+    ){
+        return  new TResult<>(accountService.addConsume(accountUuid,consumeList));
+    }
+
+    /**
      * 用户消费清单
      * @param accountUuid
      * @param pageNumber
@@ -71,6 +85,7 @@ public class AccountController {
         return  new TResult<>(accountService.getAccountConsumeByUuid(accountUuid, pageNumber, pageSize));
     }
 
+
     /**
      * 清单明细
      * @param indentNum
@@ -81,6 +96,8 @@ public class AccountController {
     ){
         return  new TResult<>(accountService.getAccountConsumeDetailByIndentNum(indentNum));
     }
+
+
 
 
     /**

@@ -180,19 +180,6 @@ public class AccountService extends BaseDictDaoService<Account> {
 
     public int addConsume(String accountUuid , ConsumeList consumeList ){
         int result = 0;
-        try {
-            result = this.execute(connection -> {
-
-                return  0 ;
-            });
-        } catch (TransactionException e) {
-            e.printStackTrace();
-        }
-
-        return  result ;
-    }
-
-    public Map<String,Object> getConsumes(String accountUuid , ConsumeList consumeList ){
 
         Map<String,String> consume = new HashMap<>();
         List<Map<String,String>> consumeChildren = new ArrayList<>();
@@ -200,16 +187,58 @@ public class AccountService extends BaseDictDaoService<Account> {
 
         String consumeUuid = UUIDUtils.getUUID();
         String indentNum = UUIDUtils.getUUID();
+        int goodsCount = 0 ;
+        Double money = 0D ;
         for (ConsumeBean consumeBean  : consumeList.getConsumeList() ){
-            // color_uuid , colthes_uuid , clothes_money ,  discount , money , len
-            Map<String,String> consumeChild  = new HashMap<>();
-            Map<String,String> clothesOrder  = new HashMap<>();
+
+            Map<String,String> consumeChild  = new HashMap<>(); // clothes_order_uuid , clothes_money , discount , money
+            Map<String,String> clothesOrder  = new HashMap<>(); // colthes_uuid , len , color_uuid
+
+            String clothesOrderUuid = UUIDUtils.getUUID();
+            clothesOrder.put("uuid",clothesOrderUuid);
+            clothesOrder.put("clothes_uuid", (String) consumeBean.getParameters().get("clothes_uuid"));
+            clothesOrder.put("len", (String) consumeBean.getParameters().get("len"));
+            clothesOrder.put("color_uuid", (String) consumeBean.getParameters().get("color_uuid"));
+
+            String orderMoney = (String) consumeBean.getParameters().get("money");
+            consumeChild.put("clothes_order_uuid",clothesOrderUuid);
+            consumeChild.put("clothes_money", (String) consumeBean.getParameters().get("clothes_money"));
+            consumeChild.put("discount", (String) consumeBean.getParameters().get("discount"));
+            consumeChild.put("money", orderMoney);
+            consumeChild.put("indent_num",indentNum);
+            consumeChild.put("account_uuid",accountUuid);
+
+            money += Double.parseDouble(orderMoney);
+            goodsCount ++ ;
+
+            consumeChildren.add(consumeChild);
+            clothesOrders.add(clothesOrder);
+
+        }
+        if (goodsCount > 0 ){
+            consume.put("uuid",consumeUuid);
+            consume.put("indent_num",indentNum);
+            consume.put("account_uuid",accountUuid);
+            consume.put("money",String.valueOf(money));
+            consume.put("goods_count", String.valueOf(goodsCount));
+
+            try {
+                result = this.execute(connection -> {
+                    int num = getDao().insertTable(connection,"clothes_order",clothesOrders);
+
+                    num = getDao().insertTable(connection,"consumer_record_children",consumeChildren);
 
 
+                    return  getDao().insertTable(connection,"consume_record",consume) ;
+                });
+            } catch (TransactionException e) {
+                e.printStackTrace();
+            }
         }
 
 
-        return  null ;
+
+        return  result ;
     }
 
 
