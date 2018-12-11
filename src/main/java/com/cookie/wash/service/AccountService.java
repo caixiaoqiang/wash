@@ -91,7 +91,7 @@ public class AccountService extends BaseDictDaoService<Account> {
         return  result ;
     }
 
-    public Map<String,Object> getAccountDetailByUuid(String uuid , int pageNumber , int pageSize ){
+    public Map<String,Object> getAccountConsumeByUuid(String uuid , int pageNumber , int pageSize ){
         Map<String,Object> result = new HashMap<>();
         Map<String,String> account = getDao().rawQueryForMap("select a.uuid , a.money , a.sex , a.phone , " +
                 "   a.last_recharge_time , a.last_consume_time " +
@@ -101,7 +101,7 @@ public class AccountService extends BaseDictDaoService<Account> {
             // TODO 消费记录
             String limit = UUIDUtils.getLimit(pageNumber, pageSize);
             StringBuffer sb = new StringBuffer();
-            sb.append("select uuid , account_uuid , money ,indent_num,indent_status,status ,add_time " +
+            sb.append("select uuid , account_uuid , money ,indent_num,indent_status,status ,add_time , goods_count" +
                     "   from consume_record " +
                     "   where account_uuid = ? ");
             int count = pageNumber == 1 ? getDao().rawQuery(sb.toString(), new String[]{uuid}).size() : 0 ;
@@ -116,6 +116,17 @@ public class AccountService extends BaseDictDaoService<Account> {
         }
 
         return  result ;
+    }
+
+    public List<Map<String,String>> getAccountConsumeDetailByIndentNum(String indentNum ){
+        String sql = "select a.clothes_money , a.discount , a.indent_status , a.add_time , a.status , " +
+                "   d.name as color , b.len " +
+                "   from consumer_record_children a " +
+                "   left join clothes_order b on a.clothes_order_uuid = b.uuid " +
+                "   left join clothes c on c.uuid = b.clothes_uuid " +
+                "   left join color d on d.uuid = b.color_uuid " +
+                "   where a.indent_num = ?　";
+        return  getDao().rawQuery(sql , new String[]{indentNum}) ;
     }
 
     public Map<String,Object> getAccountCharges(String uuid , int pageNumber , int pageSize ){
