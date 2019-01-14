@@ -29,7 +29,7 @@ public class WebResultAspect {
 
     private Long take ;
 
-    @Pointcut("execution(public * com.cookie.wash..controller..*.*(..)) && !@annotation(com.cookie.annotations.WithoutAspect)")
+    @Pointcut("execution(public * com.cookie.wash..controller..*.*(..))")
     public void controllerAspect(){}
 
     @Around("controllerAspect()")
