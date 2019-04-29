@@ -62,7 +62,9 @@ public class Producer {
             channel.basicPublish("", queueName, null, message.getBytes());
             channel.txCommit();
 
+
         } catch (Exception e) {
+            channel.txRollback();   // 回滚
             logger.error("sendMsgTransaction fail  ");
 
         }finally {
