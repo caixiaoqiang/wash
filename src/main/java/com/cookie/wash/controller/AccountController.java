@@ -1,9 +1,14 @@
 package com.cookie.wash.controller;
 
+import com.cookie.wash.RedisLock;
 import com.cookie.wash.domian.Account;
 import com.cookie.wash.domian.vo.ConsumeList;
 import com.cookie.wash.result.TResult;
 import com.cookie.wash.service.AccountService;
+import com.cookie.wash.service.Consumer;
+import com.cookie.wash.service.Producer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +19,38 @@ import java.util.Map;
 @RequestMapping("/account")
 public class AccountController {
 
+    private final static Logger logger = LoggerFactory.getLogger(AccountController.class);
+
+    private static final int TIMOUT = 10 * 1000; //超时时间 10秒
+
+    @Autowired
+    private Producer producer ;
+
+    @Autowired
+    private Consumer consumer ;
+
     @Autowired
     private AccountService accountService ;
+
+    @Autowired
+    private RedisLock redisLock ;
+
+
+    @GetMapping("lock")
+    public TResult<Boolean> lock(){
+        long time = System.currentTimeMillis() + TIMOUT;
+        return  new TResult<>(redisLock.lock("aa", String.valueOf(time)));
+    }
+
+
+    @GetMapping("unlock")
+    public TResult<Boolean> unlock(){
+        redisLock.unlock("aa","1");
+        return  new TResult<>(true);
+    }
+
+
+
 
     /**
      * 新增
@@ -129,6 +164,16 @@ public class AccountController {
                                       @RequestParam("present_money") Double presentMoney){
         return  new TResult<>(accountService.addCharge(accountUuid,chargeMoney,presentMoney));
     }
+
+
+    @PostMapping("mq")
+    public TResult<Integer> mq() throws Exception {
+        String queueName = "hello";
+        producer.sendMsgConfirmSync(queueName," it is second  msg ! ");
+        consumer.consumerMsg(queueName);
+        return  new TResult<>(1);
+    }
+
 
 
 }
